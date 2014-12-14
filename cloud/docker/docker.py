@@ -618,6 +618,9 @@ class DockerManager:
             params['dns'] = self.module.params.get('dns')
             params['volumes_from'] = self.module.params.get('volumes_from')
 
+        if docker.utils.compare_version('1.4.0', self.client.version()['Version']) >= 0:
+             params['volumes'] = None
+
         def do_create(count, params):
             results = []
             for _ in range(count):
