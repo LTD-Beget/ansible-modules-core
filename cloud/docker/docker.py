@@ -1193,6 +1193,11 @@ class DockerManager(object):
                   'tty':          self.module.params.get('tty'),
                   }
 
+        # bug? with volumes for docker >= 1.4.0 (needs examination)
+        docker_version = self.client.version()['Version']
+        if docker.utils.compare_version(docker_version, '1.4.0') > 0:
+            params['volumes'] = None
+
         def do_create(count, params):
             results = []
             for _ in range(count):
