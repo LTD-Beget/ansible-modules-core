@@ -1166,7 +1166,8 @@ class DockerManager(object):
             match = False
 
             if name:
-                matches = name in i.get('Names', [])
+                names = i.get('Names', [])
+                matches = False if names is None else (name in names)
             else:
                 image_matches = running_image in repo_tags
 
