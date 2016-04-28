@@ -501,6 +501,7 @@ class DockerManager(object):
             'restart_policy': ((0, 5, 0), '1.14'),
             'pid': ((1, 0, 0), '1.17'),
             'host_config': ((0, 7, 0), '1.15'),
+            'mem_limit': ((1, 2, 0), '1.19'),
             # Clientside only
             'insecure_registry': ((0, 5, 0), '0.0')
             }
@@ -744,6 +745,9 @@ class DockerManager(object):
         if optionals['pid'] is not None:
             self.ensure_capability('pid')
             params['pid_mode'] = optionals['pid']
+
+        if self.ensure_capability('mem_limit', fail=False):
+            params['mem_limit'] = _human_to_bytes(self.module.params.get('memory_limit'))
 
         return params
 
@@ -1248,7 +1252,6 @@ class DockerManager(object):
                   'command':      self.module.params.get('command'),
                   'ports':        self.exposed_ports,
                   'volumes':      self.volumes,
-                  'mem_limit':    _human_to_bytes(self.module.params.get('memory_limit')),
                   'environment':  self.env,
                   'hostname':     self.module.params.get('hostname'),
                   'domainname':   self.module.params.get('domainname'),
@@ -1260,6 +1263,9 @@ class DockerManager(object):
 
         if self.ensure_capability('host_config', fail=False):
             params['host_config'] = self.get_host_config()
+
+        if not self.ensure_capability('mem_limit', fail=False):
+            params['mem_limit'] = _human_to_bytes(self.module.params.get('memory_limit'))
 
         def do_create(count, params):
             results = []
