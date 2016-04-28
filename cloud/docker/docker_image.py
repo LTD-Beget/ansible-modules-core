@@ -127,7 +127,7 @@ class DockerImageManager:
         self.tag = self.module.params.get('tag')
         self.nocache = self.module.params.get('nocache')
         docker_url = urlparse(module.params.get('docker_url'))
-        self.client = docker.Client(base_url=docker_url.geturl(), timeout=module.params.get('timeout'))
+        self.client = docker.Client(version='auto', base_url=docker_url.geturl(), timeout=module.params.get('timeout'))
         self.changed = False
         self.log = []
         self.error_msg = None
@@ -245,7 +245,7 @@ def main():
 
     except RequestException as e:
         module.exit_json(failed=True, changed=manager.has_changed(), msg=repr(e))
-        
+
 # import module snippets
 from ansible.module_utils.basic import *
 
